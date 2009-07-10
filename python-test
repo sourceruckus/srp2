@@ -115,10 +115,10 @@ if [ -z "$1" ]; then
 fi
 
 found=`find_it $PATH`
-echo "found: $found" > /dev/stderr
+echo "found: $found" >&2
 for x in $found; do
-    echo "checking: $x" > /dev/stderr
-    if (check_it $x $MIN_VERSION > /dev/stderr); then
+    echo "checking: $x" >&2
+    if (check_it $x $MIN_VERSION >&2); then
         echo $x
         exit 0
     fi
