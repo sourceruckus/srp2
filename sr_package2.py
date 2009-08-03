@@ -544,7 +544,7 @@ class package:
                 if i[1:] in sr.INFOFILEDIRS:
                     #os.unlink(i[1:])
                     #print "FOOOOOOOOOOOOOOOOOOOOO"
-                    break
+                    continue
                 
                 if not fake:
                     go = sr.ACOPY + " " + i + " " + sr.SRP_ROOT_PREFIX + "/" + i[1:]
