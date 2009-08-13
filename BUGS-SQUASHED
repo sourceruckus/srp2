@@ -834,3 +834,21 @@
 		gives us the desired behavior, but may at some point cause
 		something to be done persistently that shouldn't really have
 		been (deps?).
+
+
+#094	2007-06-12
+	dist-bzip2 target in Makefile.common is including CVS files.
+	FIX:	2007-06-12
+		DIST_DEPS now also excludes any path with */CVS/* in it.
+
+
+#093	2007-06-12
+	if a file being installed is a symlink, but a file with the same
+	name already exists, srp assumes the existing file is also a
+	symlink.  if the existing file is actually a directory, this causes
+	srp to crash.
+	FIX:	2007-06-12
+		reworked _dump a bit in addition to fixing this particular
+		problem.  a .srpbak file is now always created.  after
+		installing the new file, the checksum comparisons are made
+		to decide to delete the .srpbak file.

@@ -113,7 +113,7 @@ DIST_SRP=${DISTNAME}-${PACKAGEREV}.srp
 
 # this can be overridden by parent makefiles
 ifeq (${DIST_DEPS},)
-  DIST_DEPS=$(shell find ${OFFICIALDIR} \( ! -path ./${DISTNAME}\* -a ! -path ./${BUILDDIR}\* -a ! -type d \) -print | sed 's| |\\ |g')
+  DIST_DEPS=$(shell find ${OFFICIALDIR} \( ! -path ./${DISTNAME}\* -a ! -path ./${BUILDDIR}\* -a ! -path \*/CVS/\* -a ! -type d \) -print | sed 's| |\\ |g')
 endif
 
 SRP_ROOT_PREFIX_for_makefile=${PWD}/${BUILDDIR}/t
@@ -183,7 +183,7 @@ ${DIST_SRP}: ${DIST_BZ2} ${TEMPLATES:%=${BUILDDIR}/%} ${MAKEFILE}
 	mkdir -p ${BUILDDIR}
 	cp -dpR ${DIST_BZ2} ${BUILDDIR}/
 	cp -dpR ${BUILDDIR}/${PACKAGEDIR}/* ${BUILDDIR}
-	tar -C ${BUILDDIR} --exclude ${PACKAGEDIR} -cf $@ .
+	tar -C ${BUILDDIR} --exclude ./${PACKAGEDIR} -cf $@ .
 
 
 dist-brp: ${DIST_SRP} ${MAKEFILE}

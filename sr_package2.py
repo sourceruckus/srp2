@@ -16,6 +16,7 @@ import tarfile
 import pwd
 import grp
 import shutil
+import time
 
 import sr
 import utils
@@ -420,6 +421,34 @@ class package:
                     # on and give the user a warning.
                     utils.vprint("failed to chown file!")
                     pass
+
+            # before we do anything else, let's create an srpbak file (unless
+            # the file we're installing is a directory)
+            renamed_file = None
+            target_filename = os.path.join(os.path.sep, sr.SRP_ROOT_PREFIX, i[2:])
+            utils.vprint("checking for existence of '%s'" % target_filename)
+            if not fake and not (os.path.isdir(i) and not os.path.islink(i)):
+                # not faking it, and file to be installed isn't a directory
+                if os.path.exists(target_filename) or os.path.islink(target_filename):
+                    utils.vprint("exists!!!")
+                    renamed_file = target_filename + ".srpbak"
+                    # what if renamed_file already exists?
+                    if os.path.isdir(renamed_file) and not os.path.islink(renamed_file):
+                        # renamed_file is a directory...  try removing it
+                        try:
+                            os.rmdir(renamed_file)
+                        except:
+                            # don't want to inadvertently remove uncontrolled user
+                            # files.  just rename the backup file with a timestamp
+                            stamp = "%s" % time.time()
+                            os.rename(renamed_file, renamed_file + stamp)
+                    elif os.path.exists(renamed_file) or os.path.islink(renamed_file):
+                        # shouldn't really have to do this, but windows can't
+                        # rename to an existing file...
+                        os.remove(renamed_file)
+
+                    os.rename(target_filename, renamed_file)
+
             
             if os.path.islink(i):
                 utils.vprint("link")
@@ -435,9 +464,6 @@ class package:
                 
                 if not fake:
                     link = os.path.join("/", sr.SRP_ROOT_PREFIX, i[2:])
-                    if os.path.exists(link) or os.path.islink(link):
-                        utils.vprint("exists!!!")
-                        os.unlink(link)
 
                     # since we already fixed any bad paths, we can just copy
                     # the symlink
@@ -464,6 +490,13 @@ class package:
                 utils.vprint("directory")
                 if not fake:
                     file = os.path.join("/", sr.SRP_ROOT_PREFIX, i[2:])
+                    # before we make the dir, make sure a regular file of the
+                    # same name doesn't already exist
+                    if os.path.isfile(file):
+                        file2 = file + ".srpbak"
+                        if os.path.exists(file2) or os.path.islink(file2):
+                            os.remove(file2)
+                        os.rename(file, file2)
                     utils.vprint("making dir: %s" % (file))
                     try:
                         os.makedirs(file)
@@ -514,30 +547,6 @@ class package:
                     break
                 
                 if not fake:
-                    thefile = os.path.join("/", sr.SRP_ROOT_PREFIX, i[2:])
-                    if os.path.exists(thefile) or os.path.islink(thefile):
-                        utils.vprint("exists!!!")
-                        if not force or not utils.any_of_in(["SRP_MD5SUM",
-                                                             "SRP_SHA1SUM",
-                                                             "SRP_CHECKSUM"],
-                                                            self.srp_flags):
-                            os.rename(thefile, thefile + ".srpbak")
-                        else:
-                            utils.vprint(logs)
-                            for j in logs:
-                                utils.vprint("j: %s" % j)
-                                utils.vprint("i[1:]: " + i[1:])
-                                log = os.path.join(sr.RUCKUS, "installed", j)
-                                utils.vprint("log: %s" % log)
-                                sum_correct = lookup_checksum(i[1:], log)
-                                utils.vprint("sum_correct: %s" % sum_correct)
-                                sum_real = utils.checksum(sr.SRP_ROOT_PREFIX + "/" + i[1:])
-                                utils.vprint("sum_real: %s" % sum_real)
-                                if sum_correct != "" and sum_correct != sum_real:
-                                    utils.vprint("creating srpbak")
-                                    os.rename(thefile, thefile + ".srpbak")
-
-
                     go = sr.ACOPY + " " + i + " " + sr.SRP_ROOT_PREFIX + "/" + i[1:]
                     utils.vprint(go)
                     status = os.system(go)
@@ -575,6 +584,39 @@ class package:
                                 if x not in deps_lib:
                                     deps_lib.append(x)
 
+            # remove srpbak file if it's not needed
+            if force and renamed_file:
+                # we're upgrading, and we made a backup
+                utils.vprint("cleaning up backup file '%s'" % renamed_file)
+                utils.vprint(logs)
+
+                if os.path.islink(renamed_file):
+                    for j in logs:
+                        utils.vprint("i[1:]: " + i[1:])
+                        log = os.path.join(sr.RUCKUS, "installed", j)
+                        utils.vprint("log: %s" % log)
+                        link_correct = lookup_linktarget(i[1:], log)
+                        utils.vprint("link_correct: %s" % link_correct)
+                        link_real = os.readlink(renamed_file)
+                        utils.vprint("link_real: %s" % link_real)
+                        if "" != link_correct == link_real:
+                            utils.vprint("removing unneeded backup file '%s'" % renamed_file)
+                            os.remove(renamed_file)
+
+                else:
+                    for j in logs:
+                        utils.vprint("i[1:]: " + i[1:])
+                        log = os.path.join(sr.RUCKUS, "installed", j)
+                        utils.vprint("log: %s" % log)
+                        sum_correct = lookup_checksum(i[1:], log)
+                        utils.vprint("sum_correct: %s" % sum_correct)
+                        sum_real = utils.checksum(renamed_file)
+                        utils.vprint("sum_real: %s" % sum_real)
+                        if "" != sum_correct == sum_real:
+                            utils.vprint("removing unneeded backup file '%s'" % renamed_file)
+                            os.remove(renamed_file)
+            
+            
             # add file perms line, if configured
             if "SRP_PERMS" in self.srp_flags:
                 # make sure the supposed ownership is preserverd, even if the
@@ -2759,6 +2801,28 @@ class brp(package):
     
 
 #---------------------------------------------
+
+
+def lookup_linktarget(filename, log):
+    """lookup_linktarget(filename, log) -> linktarget
+    takes a filename and a logfile, returns the target for symlink listed in log
+    """
+    f = file(log, "r")
+    srp_flags = f.readline().rstrip().split("srp_flags = ")[-1].split()
+    if "SRP_LINKTARGET" not in srp_flags:
+        return ""
+    
+    i = f.readline()
+    while i != '' and i.rstrip() != filename:
+        i = f.readline()
+    # next entry is filetype/checksum
+    f.readline()
+    # next entry is permissions
+    f.readline()
+    # next entry is the linktarget
+    retval = f.readline().rstrip()
+    f.close()
+    return retval
 
 
 def lookup_checksum(filename, log):

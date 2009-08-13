@@ -1,4 +1,10 @@
-2007-02-xx: summary of changes from 2.3.0 to 2.4.0
+2007-06-12: summary of changes from 2.4.0 to 2.4.1
+--------------------------------------------------
+	- squashed bug #094 (dist-bzip2 CVS files)
+	- squashed bug #093 (new srpbak code)
+	
+
+2007-04-06: summary of changes from 2.3.0 to 2.4.0
 --------------------------------------------------
 	- squashed bug #083 (brp prepost exceptions)
 	- squashed bug #087 (DEVDATE multiple expansion)
