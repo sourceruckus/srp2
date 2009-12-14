@@ -80,7 +80,11 @@ LDSOCONF = "/etc/ld.so.conf"
 LDPATH_DEFAULT = ['/lib', '/usr/lib', '/usr/local/lib']
 
 # what are the infofile directory files?
-INFOFILEDIRS = ["/usr/share/info/dir", "/usr/local/share/info/dir", "/etc/info-dir"]
+INFOFILEDIRS = ["/usr/share/info/dir",
+                "/usr/info/dir",
+                "/usr/local/share/info/dir",
+                "/usr/local/info/dir",
+                "/etc/info-dir"]
 
 # what shell should we invoke for our scripts?
 SH = "__SH__"
@@ -143,7 +147,8 @@ default_flags = ["SRP_UPGRADABLE",
                  "SRP_CHECKSUM",
                  "SRP_PERMS",
                  "SRP_LINKTARGET",
-                 "SRP_LEFTOVERS"
+                 "SRP_LEFTOVERS",
+                 "SRP_INSTALLINFO"
                  ]
 
 # this is the search path for dependent executables

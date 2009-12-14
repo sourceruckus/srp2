@@ -544,6 +544,12 @@ class package:
                 if i[1:] in sr.INFOFILEDIRS:
                     #os.unlink(i[1:])
                     #print "FOOOOOOOOOOOOOOOOOOOOO"
+                    #print "renamed_file:", renamed_file
+                    #print "target_filename:", target_filename
+                    #print os.listdir(os.path.dirname(target_filename))
+                    if renamed_file:
+                        # re-re-name dir.srpbak to dir
+                        os.rename(renamed_file, target_filename)
                     continue
                 
                 if not fake:
