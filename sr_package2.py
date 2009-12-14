@@ -905,6 +905,14 @@ cd """ + self.inplace + """ &&
                     if not utils.write_ldpath(ldpath):
                         print "[ failed ]"
                         return 0
+
+            # and attempt to run ldconfig to update the system
+            go = "ldconfig"
+            if sr.SRP_ROOT_PREFIX:
+                go += " -r %s" % sr.SRP_ROOT_PREFIX
+            #go += " >/dev/null 2>&1"
+            #print go
+            os.system(go)
             print "[  done  ]"
         
         return 1
@@ -1693,6 +1701,15 @@ cd """ + self.inplace + """ &&
             if ldpath_rmlist != []:
                 utils.vprint("writing new ldpath")
                 utils.write_ldpath(ldpath)
+
+        if "SRP_LDCONFIG" in self.srp_flags:
+            # and attempt to run ldconfig to update the system
+            go = "ldconfig"
+            if sr.SRP_ROOT_PREFIX:
+                go += " -r %s" % sr.SRP_ROOT_PREFIX
+            #go += " >/dev/null 2>&1"
+            #print go
+            os.system(go)
         
         if not failed:
             if not quiet:
