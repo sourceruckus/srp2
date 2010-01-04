@@ -2178,26 +2178,9 @@ class srp(package):
             hosttype = "any." + hosttype.split('.')[1]
         
         # now, tar up the appropriate files to create the brp
-        #brp_name = os.path.join(destination,
-        #                        self.package_name.split('.srp')[0])
-        # in order to figure out the version string now, we have to assume the
-        # following:
-        #    - the first segment (split("-")) that start with a digit is the
-        #      beginning of the version string
-        #      ex: foo-1.0rc3-1.srp --> 1.0rc3-1
-        #      ex: gtk2-2.3-1.srp --> 2.3-1
-        #      ex: foo-2-baz-1.0-1.srp --> 2-baz-1.0-1 (probably incorrect)
-        #      ex: ugly2.0-1.srp --> ERROR
-        v = self.package_name.split(".srp")[0].split("-")
-        for x in v[:]:
-            if not x[0].isdigit():
-                v = v[1:]
-            else:
-                break
-        v = "-".join(v)
-        brp_name = os.path.join(destination,
-                                "%s-%s" % (self.name, v))
-        brp_name += "." + hosttype + ".brp"
+        v = utils.parse_name_of_bzball(self.filename)[1]
+        brp_name = "%s-%s-%s.%s" % (self.name, v, self.package_rev, hosttype)
+        brp_name = os.path.join(destination, brp_name) + ".brp"
 
         blarg = "writing brp: " + os.path.basename(brp_name)
         sys.stdout.write(blarg.ljust(69))

@@ -586,3 +586,58 @@ def compat_unescaper(buffer):
             retval.append(buffer[i])
     
     return string.join(retval, "")
+
+
+def parse_name_of_bzball(buf):
+    """
+    this method extracts the version and name out of the filename of a
+    bzball.
+    retval: [name, version]
+    """
+    
+    # define a private version testing method.
+    def is_version(buf):
+        if '.' not in buf:
+            return False
+        return True
+    
+    # make sure buf is valid bzball
+    if not buf.endswith(".tar.bz2"):
+        raise Exception("bzball must end in '.tar.bz2'")
+    
+    # remove path components, strip off '.tar.bz2' and split on '-'
+    parts = os.path.basename(buf)[:-8].split('-')
+    vprint("parts: %s" % parts)
+    
+    version = 0
+    
+    # reverse parts for easy backwards interating
+    parts.reverse()
+    
+    # lookup the index of the last occurring segment that passes our
+    # is_version test.
+    i = 1
+    for p in parts:
+        vprint("examining: %s" % p)
+        if is_version(p):
+            version = i
+        elif version != 0:
+            break
+        i+=1
+
+    # if no parts pass our is_version test, use the last part as version.
+    if version == 0:
+        version = 1
+
+    # parts after end of detected version are parts of name
+    name = parts[version:]
+    name.reverse()
+    name = '-'.join(name)
+
+    # put the version string together by slicing the found parts and
+    # re-joining on '-'.
+    version = parts[:version]
+    version.reverse()
+    version = '-'.join(version)
+
+    return name, version
