@@ -167,6 +167,10 @@ class package:
         if "SRP_NO_LEFTOVERS" in self.srp_flags:
             self.srp_flags.remove("SRP_LEFTOVERS")
             self.srp_flags.remove("SRP_NO_LEFTOVERS")
+
+        if "SRP_NO_NOINSTALL_LA" in self.srp_flags:
+            self.srp_flags.remove("SRP_NOINSTALL_LA")
+            self.srp_flags.remove("SRP_NO_NOINSTALL_LA")
         
         self.flags = f.readline().rstrip()
         
@@ -823,6 +827,11 @@ cd """ + self.inplace + """ &&
                             temp not in sr.LDPATH_DEFAULT):
                             ldpath.append(temp)
                             ldpath_pruned.append(temp)
+                if "SRP_NOINSTALL_LA" in self.srp_flags:
+                    temp = sr.SRP_ROOT_PREFIX + i
+                    if utils.is_la(temp):
+                        log.remove(i)
+                        os.remove(temp)
             if "SRP_PREPOSTLIB" in self.srp_flags:
                 #prepost = self.logfile + "_-_" + sr.PREPOSTLIB2
                 prepost = self.logfile + "_-_" + self.prepost_filename

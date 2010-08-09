@@ -161,6 +161,31 @@ def is_so(file):
         return 0
 
 
+def is_la(file):
+    """is_la(file) -> 1 or 0
+    returns 1 if 'file' is a libtool librarys, 0 otherwise.
+    also returns 0 if we don't have FILE.
+    returns 0 on other errors as well.
+    """
+    if sr.FILE == "":
+        return 0
+    
+    if os.path.islink(file):
+        file = os.path.realpath(file)
+    
+    go = sr.FILE + " " + file
+    vprint(go)
+    status = commands.getstatusoutput(go)
+    vprint(status)
+    if status[0] != 0:
+        return 0
+    
+    if status[1].find("libtool library file") != -1:
+        return 1
+    else:
+        return 0
+
+
 def read_ldpath():
     """read_ldpath() -> ldpath
     returns a list of directories for the ldpath

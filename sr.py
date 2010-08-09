@@ -139,7 +139,9 @@ supported_flags = ["SRP_DUMMYFLAG",
                    "SRP_NO_LINKTARGET",
                    "SRP_NO_INSTALLINFO",
                    "SRP_NO_LDCONFIG",
-                   "SRP_NO_LEFTOVERS"
+                   "SRP_NO_LEFTOVERS",
+                   "SRP_NOINSTALL_LA",
+                   "SRP_NO_NOINSTALL_LA"
                    ]
 
 # default SRP_FLAGS
@@ -148,7 +150,8 @@ default_flags = ["SRP_UPGRADABLE",
                  "SRP_PERMS",
                  "SRP_LINKTARGET",
                  "SRP_LEFTOVERS",
-                 "SRP_INSTALLINFO"
+                 "SRP_INSTALLINFO",
+                 "SRP_NOINSTALL_LA"
                  ]
 
 # this is the search path for dependent executables
