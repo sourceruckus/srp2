@@ -10,6 +10,7 @@ TEMPLATE_KEYS =	VERSIONSTRING
 
 PREFIX	      =	/usr
 BINDIR	      =	${PREFIX}/bin
+LIBDIR        =	${PREFIX}/lib
 DOCDIR	      =	${PREFIX}/share/doc
 
 all: dist ${SRP}
@@ -24,6 +25,7 @@ SRP:=$(shell pwd)/../../${BUILDDIR}/srp
 
 install: ${BUILDDIR}/foo ${MAKEFILE}
 	install -vD $< ${DESTDIR}${BINDIR}/foo
+	install -vD libfoo.la ${DESTDIR}${LIBDIR}/libfoo.la
 
 install-docs: ${BUILDDIR}/README ${MAKEFILE}
 	mkdir -p ${DESTDIR}${DOCDIR}/${DISTNAME}

@@ -382,6 +382,12 @@ class package:
         
         for i in list:
             utils.vprint("installing: " + i)
+            if "SRP_NOINSTALL_LA" in self.srp_flags:
+                if utils.is_la(i):
+                    utils.vprint("not installing libtool library: " + i)
+                    os.remove(i)
+                    continue
+
             size_installed = size_installed + utils.getsize(i)
 
             # do SRP_PERMS and/or SRP_OWNEROVERRIDE stuff.
@@ -827,11 +833,6 @@ cd """ + self.inplace + """ &&
                             temp not in sr.LDPATH_DEFAULT):
                             ldpath.append(temp)
                             ldpath_pruned.append(temp)
-                if "SRP_NOINSTALL_LA" in self.srp_flags:
-                    temp = sr.SRP_ROOT_PREFIX + i
-                    if utils.is_la(temp):
-                        log.remove(i)
-                        os.remove(temp)
             if "SRP_PREPOSTLIB" in self.srp_flags:
                 #prepost = self.logfile + "_-_" + sr.PREPOSTLIB2
                 prepost = self.logfile + "_-_" + self.prepost_filename
