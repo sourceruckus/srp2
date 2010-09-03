@@ -193,7 +193,7 @@ uninstall-examples:
 	rmdir --ignore-fail-on-non-empty ${DOCDIR}
 
 clean: ${SUBDIRS:=-clean}
-	find . \( -name \*~ -o -name .\#\* -o -name \*.pyc \) -exec rm -v {} \;
+	find . \( -name \*~ -o -name .\#\* -o -name \*.pyc \) -exec rm -fv {} \;
 	rm -rf ${BUILDDIR} ${DISTNAME}
 
 distclean: clean ${SUBDIRS:=-distclean}
