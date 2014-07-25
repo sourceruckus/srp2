@@ -593,7 +593,7 @@ class package:
                     # causing ldd to spit up, but still return 0 like this:
                     # (0, "lddlibc4: cannot read header from `/opt/ACE/ACE-5.3a/bin/.cvsignore'")
                     if temp[0] == 0:
-                        if temp[1].split(':')[0] != "lddlibc4":
+                        if not temp[1].startswith("lddlibc4:") and temp[1].strip() != "statically linked":
                             temp = temp[1].split('\n')
                             for x in temp:
                                 x = x.split()[0].strip()
