@@ -12,6 +12,7 @@ import md5
 import sha
 import tarfile
 import stat
+import multiprocessing
 
 import sr
 
@@ -232,15 +233,35 @@ def check_for_lib_using_dl(lib):
     """check_for_lib_using_dl(lib) -> True or False
     uses the dl module to check for a library.
     """
+    # NOTE: This is done using the multiprocessing module and a shared
+    #       queue to keep our parent process from crashing if dl goes
+    #       boom.
+    q = multiprocessing.Queue()
+    p = multiprocessing.Process(target=check_for_lib_using_dl_subproc,
+                                args=(lib, q))
+    p.start()
+    p.join()
+    # NOTE: If the queue is empty (i.e., subproc crashed) or contains
+    #       False, the library was not found.
+    try:
+        retval = q.get(False)
+    except:
+        retval = False
+    return retval
+
+
+def check_for_lib_using_dl_subproc(lib, q=None):
     # this only works if sizeof(int) == sizeof(long) == sizeof(char *).
     # SystemError gets thrown on failure.
-    import dl
-    
     try:
-        dl.open(lib)
-        return True
+        import dl
+        dl.open(lib).close()
+        retval = True
     except:
-        return False
+        retval = False
+    if q:
+        q.put(retval)
+    return retval
 
 
 def check_for_lib_compat(lib):
