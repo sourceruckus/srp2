@@ -2,8 +2,8 @@
 #-*- mode: python -*-
 
 """\
-the source ruckus packager
-(c) 2001-2005 Mike Labriola <mdlabriola@yahoo.com>
+The Source Ruckus Packager
+(c) 2001-20018 Michael D Labriola <michael.d.labriola@gmail.com>
 
 usage: srp [MODE] ...
   

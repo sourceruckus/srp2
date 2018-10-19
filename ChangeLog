@@ -1,8 +1,27 @@
+2018-10-18: summary of changes from 2.4.1 to 2.5.0
+--------------------------------------------------
+
+	- Applied a series of patches I'd been using at work that somehow
+	  fell through the cracks for the last 10 years.  :-/
+
+	  Of note:
+	    - SRP_INSTALLINFO no longer skips files installed after the
+	      dir file
+	    - SRP_INSTALLINFO is now a default flag
+	    - SRP_NO_COMPILE removed from default flags
+	    - SRP_LDCONFIG now actually runs ldconfig after installing
+	    - added SRP_NOINSTALL_LA flag (and addit it to defaults)
+	    - guarded against dlopen segfault
+	    - keep "statically linked" out of deps_lib
+
+	- squashed bug ...
+
+
 2007-06-12: summary of changes from 2.4.0 to 2.4.1
 --------------------------------------------------
 	- squashed bug #094 (dist-bzip2 CVS files)
 	- squashed bug #093 (new srpbak code)
-	
+
 
 2007-04-06: summary of changes from 2.3.0 to 2.4.0
 --------------------------------------------------
@@ -16,12 +35,12 @@
 	- squashed bug #089 (SRP_{,NO_}LEFTOVERS)
 	- squashed bug #091 (python bug #1609958)
 	- squashed bug #092 (SRP_CHAIN upgrade)
-	
+
 	Fixing bug #085 introduces SRP's Makefile.common.  This makefile can
 	be used by package maintainers to consistently create
 	foo-x.y.z.tar.bz2, foo-x.y.z-r.srp, and foo-x.y.z-r.platform.id.brp
 	targets.  See Info files and example packages for instructions.
-	
+
 	Fixing bug #084 introduces a new srp_flag: SRP_CHAIN.  This flag can
 	be used to generate multiple BRPs (or installed packages) from a
 	single SRP.  For example, building the foo-1.0-1.srp package would
@@ -29,21 +48,21 @@
 	foo-dev-1.0-1.linux.i686.brp, and foo-docs-1.0-1.linux.i686.brp.
 	The flag should have the next package's NOTES file's name attached
 	as an argument.
-	
+
 	Fixing bug #089 introduces two new flags: SRP_LEFTOVERS and
 	SRP_NO_LEFTOVERS.  SRP_LEFTOVERS is now a member of default_flags
 	and is the traditional behavior when upgrading (left-over files
 	remain behind as a special package).  To turn off this behavior, a
 	package can use the SRP_NO_LEFTOVERS flag to force SRP to remove all
 	traces of the old package when upgrading.
-	
+
 	Fixing bug #091 introduces new functionality to python-test.
 	python-test will now run each script in python-test.d (if it
 	exists) with each interpreter found with an appropriate version to
 	check for other interpreter features/bugs.  The only script in
 	there right now is check-tarfile-module.py, which checks for the
 	existence of python bug #1609958.
-	
+
 	Makefile.common and python-test are installed in LIBDIR.  The
 	python-test script can be used to locate an appropriate version of
 	the python interpreter on host systems.
@@ -255,7 +274,7 @@
 	- infofile now gets gziped as a part of the 'info' Makefile target
 	- made Makefile more system independant (but possibly less secure)
 	  by not using absolute paths to programs like 'cp', 'mkdir' and
-	  'install-info' 
+	  'install-info'
 	- make clean now removes sr.info.gz (woops)
 	- added some completion to check mode
 	- add some completion to uninstall mode (prompt if it's not exact!)
