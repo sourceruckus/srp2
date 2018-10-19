@@ -113,44 +113,44 @@ docs-html: ${BUILDDIR}/${TEXINFO}
 	makeinfo --html -o ${BUILDDIR}/html $<
 
 ruckusdir:
-	mkdir -p ${RUCKUS_for_makefile}/build
-	mkdir -p ${RUCKUS_for_makefile}/package
-	mkdir -p ${RUCKUS_for_makefile}/tmp
-	mkdir -p ${RUCKUS_for_makefile}/installed
-	mkdir -p ${RUCKUS_for_makefile}/brp
+	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/build
+	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/package
+	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/tmp
+	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/installed
+	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/brp
 
 install: install-bin install-libs install-man install-info ruckusdir
 
 install-docs: install-pdf install-html install-examples
 
 install-bin: bin
-	install -vD ${BUILDDIR}/${BIN} ${BINDIR}/${BIN}
+	install -vD ${BUILDDIR}/${BIN} ${DESTDIR}${BINDIR}/${BIN}
 
 install-libs: libs
-	install -vd ${LIBDIR}
-	install -vD --mode=644 ${LIBS:%=${BUILDDIR}/%} ${LIBDIR}
-	install -vD --mode=644 ${BUILDDIR}/*.pyc ${LIBDIR}
-	install -vD --mode=644 Makefile.common ${LIBDIR}/Makefile.common
-	install -vD python-test ${LIBDIR}/python-test
+	install -vd ${DESTDIR}${LIBDIR}
+	install -vD --mode=644 ${LIBS:%=${BUILDDIR}/%} ${DESTDIR}${LIBDIR}
+	install -vD --mode=644 ${BUILDDIR}/*.pyc ${DESTDIR}${LIBDIR}
+	install -vD --mode=644 Makefile.common ${DESTDIR}${LIBDIR}/Makefile.common
+	install -vD python-test ${DESTDIR}${LIBDIR}/python-test
 
 install-man: man
-	install -vD --mode=644 ${BUILDDIR}/${MAN}.gz ${MANDIR}/${MAN}.gz
+	install -vD --mode=644 ${BUILDDIR}/${MAN}.gz ${DESTDIR}${MANDIR}/${MAN}.gz
 
 
 install-info: info
-	install -vD --mode=644 ${BUILDDIR}/${INFO}.gz ${INFODIR}/${INFO}.gz
-	install-info ${INFODIR}/${INFO}.gz ${INFODIR}/dir
+	install -vD --mode=644 ${BUILDDIR}/${INFO}.gz ${DESTDIR}${INFODIR}/${INFO}.gz
+	install-info ${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir
 
 install-pdf: docs-pdf
-	install -vD --mode=644 ${BUILDDIR}/${PDF} ${DOCDIR}/${PDF}
+	install -vD --mode=644 ${BUILDDIR}/${PDF} ${DESTDIR}${DOCDIR}/${PDF}
 
 install-html: docs-html
-	cd ${BUILDDIR}/html && find . -type d -exec install -vd ${DOCDIR}/html/{} \;
-	cd ${BUILDDIR}/html && find . ! -type d -exec install -v --mode=644 {} ${DOCDIR}/html/{} \;
+	cd ${BUILDDIR}/html && find . -type d -exec install -vd ${DESTDIR}${DOCDIR}/html/{} \;
+	cd ${BUILDDIR}/html && find . ! -type d -exec install -v --mode=644 {} ${DESTDIR}${DOCDIR}/html/{} \;
 
 install-examples: mostly_all
-	cd examples && find . -type d -a ! -path \*/CVS\* -a ! -path \*/${BUILDDIR}\* -exec install -vd ${DOCDIR}/examples/{} \;
-	cd examples && find . ! -type d -a ! -path \*/CVS\* -a ! -path \*/${BUILDDIR}\* -exec install -v --mode=644 {} ${DOCDIR}/examples/{} \;
+	cd examples && find . -type d -a ! -path \*/CVS\* -a ! -path \*/${BUILDDIR}\* -exec install -vd ${DESTDIR}${DOCDIR}/examples/{} \;
+	cd examples && find . ! -type d -a ! -path \*/CVS\* -a ! -path \*/${BUILDDIR}\* -exec install -v --mode=644 {} ${DESTDIR}${DOCDIR}/examples/{} \;
 
 dist: dist-srp
 
@@ -158,40 +158,43 @@ install-dist-srp: ruckusdir dist-srp mostly_all
 	./${BUILDDIR}/srp -i ${DIST_SRP}
 
 uninstall: uninstall-bin uninstall-libs uninstall-man uninstall-info
-	rmdir --ignore-fail-on-non-empty ${RUCKUS_for_makefile}/build
-	rmdir --ignore-fail-on-non-empty ${RUCKUS_for_makefile}/package
-	rmdir --ignore-fail-on-non-empty ${RUCKUS_for_makefile}/tmp
-	rmdir --ignore-fail-on-non-empty ${RUCKUS_for_makefile}/installed
-	rmdir --ignore-fail-on-non-empty ${RUCKUS_for_makefile}/brp
-	rmdir --ignore-fail-on-non-empty ${RUCKUS_for_makefile}
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/build
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/package
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/tmp
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/installed
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/brp
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}
 
-uninstall-docs: uninstall-info uninstall-pdf uninstall-html uninstall-examples
+uninstall-docs: uninstall-pdf uninstall-html uninstall-examples
 
 uninstall-bin:
-	rm -f ${BINDIR}/${BIN}
+	rm -f ${DESTDIR}${BINDIR}/${BIN}
 
 uninstall-libs:
-	rm -f ${LIBS:%=${LIBDIR}/%}
-	rmdir --ignore-fail-on-non-empty ${LIBDIR}
+	rm -f ${LIBS:%=${DESTDIR}${LIBDIR}/%}
+	rm -f ${DESTDIR}${LIBDIR}/*.pyc
+	rm -f ${DESTDIR}${LIBDIR}/python-test
+	rm -f ${DESTDIR}${LIBDIR}/Makefile.common
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${LIBDIR}
 
 uninstall-man:
-	rm -f ${MANDIR}/${MAN}.gz
+	rm -f ${DESTDIR}${MANDIR}/${MAN}.gz
 
 uninstall-info:
-	rm -f ${INFODIR}/${INFO}.gz
-	install-info --delete ${INFODIR}/${INFO}.gz ${INFODIR}/dir
+	install-info --delete ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir
+	rm -f ${DESTDIR}${INFODIR}/${INFO}.gz
 
 uninstall-pdf:
-	rm -f ${DOCDIR}/${PDF}
-	rmdir --ignore-fail-on-non-empty ${DOCDIR}
+	rm -f ${DESTDIR}${DOCDIR}/${PDF}
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${DOCDIR}
 
 uninstall-html:
-	rm -rf ${DOCDIR}/html
-	rmdir --ignore-fail-on-non-empty ${DOCDIR}
+	rm -rf ${DESTDIR}${DOCDIR}/html
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${DOCDIR}
 
 uninstall-examples:
-	rm -rf ${DOCDIR}/examples
-	rmdir --ignore-fail-on-non-empty ${DOCDIR}
+	rm -rf ${DESTDIR}${DOCDIR}/examples
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${DOCDIR}
 
 clean: ${SUBDIRS:=-clean}
 	find . \( -name \*~ -o -name .\#\* -o -name \*.pyc \) -exec rm -fv {} \;
