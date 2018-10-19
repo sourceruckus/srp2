@@ -1,8 +1,8 @@
 srp
 __DISTNAME__.tar.bz2
 __DISTNAME__
-the source ruckus packager
-SRP_INSTALLINFO SRP_CHAIN=NOTES-docs SRP_NO_LEFTOVERS
+The Source Ruckus Packager
+SRP_INSTALLINFO SRP_NO_LEFTOVERS
 SRP_NONE
 SRP_NONE
 SRP_NONE
