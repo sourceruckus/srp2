@@ -114,8 +114,16 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+# if PYTHON already set in the environment, there's nothing to do
+if [ -n "$PYTHON" ]; then
+    exit 0
+fi
+
+# get a list of interpreters from PATH
 found=`find_it $PATH`
 echo "found: $found" >&2
+
+# check interpreters for compliance
 for x in $found; do
     echo "checking: $x" >&2
     if (check_it $x $MIN_VERSION >&2); then
