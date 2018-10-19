@@ -51,7 +51,7 @@ check_it() {
 # required version.  exits successfully (0) if the version is acceptable.
 # ex: check_version /usr/bin/python 2.3.1
 check_version() {
-    version=`$1 -c "import sys; print '%d.%d.%d' % sys.version_info[:3]" 2> /dev/null`
+    version=$($1 -c "import sys; sys.stdout.write('{}.{}.{}\n'.format(*sys.version_info[:3]))" 2>/dev/null)
     #echo "version: $version"
     if [ -z "$version" ]; then
 	return 1
