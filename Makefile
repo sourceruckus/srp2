@@ -10,7 +10,7 @@ DEVTAG	      = dev
 # can use anything added in 2.4 or 2.5 in their PREPOSTLIBs (the subprocess
 # module, function decorators, etc).
 MIN_PYTHON=2.5
-PYTHON_INTERPRETER:=$(shell ./python-test ${MIN_PYTHON})
+PYTHON := $(shell which python)
 
 PREFIX = /usr
 BINDIR = ${PREFIX}/bin
@@ -73,24 +73,25 @@ PDF =		srp.pdf
 SUBDIRS=examples
 
 OFFICIALDIR=.
-TEMPLATE_KEYS =	PYTHON_INTERPRETER LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS RMKDIR ACOPY SH CHECKSUM BINDIR
+TEMPLATE_KEYS =	PYTHON LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS RMKDIR ACOPY SH CHECKSUM BINDIR
 
 .PHONY: all mostly_all configure info ruckusdir install install-info dist
 .PHONY: install-dist-srp uninstall clean
 .PHONY: distclean docs man
 .PHONY: ${SUBDIRS} ${SUBDIRS:=-clean} ${SUBDIRS:=-distclean}
 
-all: dist mostly_all
+all: configure mostly_all dist
 
 include Makefile.common
 
 mostly_all: bin libs man info #${SUBDIRS}
 
-bin: configure ${BUILDDIR}/${BIN}
+bin: ${BUILDDIR}/${BIN}
 
 configure:
-	@echo "PYTHON_INTERPRETER: ${PYTHON_INTERPRETER}"
-	@if [ -z "${PYTHON_INTERPRETER}" ]; then \
+	PYTHON=${PYTHON} ./python-test ${MIN_PYTHON}
+	@echo "PYTHON: ${PYTHON}"
+	@if [ -z "${PYTHON}" ]; then \
 	  echo "Couldn't find a suitable version of Python!"; \
 	  echo "${DISTNAME} requires Python >= ${MIN_PYTHON}!"; \
 	  echo "It also requires a few bugs to be fixed, see python-test.d for details."; \
@@ -98,7 +99,7 @@ configure:
 	fi
 
 libs: ${LIBS:%=${BUILDDIR}/%}
-	${PYTHON_INTERPRETER} -c "import compileall; compileall.compile_dir('${BUILDDIR}')"
+	${PYTHON} -c "import compileall; compileall.compile_dir('${BUILDDIR}')"
 
 man: ${BUILDDIR}/${MAN} ${BUILDDIR}/${MAN}.gz 
 
