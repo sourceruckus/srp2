@@ -14,7 +14,7 @@
 	    - guarded against dlopen segfault
 	    - keep "statically linked" out of deps_lib
 
-	- squashed bug ...
+	- squashed bug #098 (blank/special chars in installed filenames)
 
 
 2007-06-12: summary of changes from 2.4.0 to 2.4.1

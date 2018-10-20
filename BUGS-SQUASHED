@@ -852,3 +852,18 @@
 		problem.  a .srpbak file is now always created.  after
 		installing the new file, the checksum comparisons are made
 		to decide to delete the .srpbak file.
+
+
+#097	2018-10-19
+	Trying to install files w/ special characters in their names
+	results in odd behavior and failure.  Problem stems from creating
+	command strings to be passed into os.system(), which invokes a
+	shell.  That underlying design problem is being addressed in the
+	srp3 rewrite, which doesn't use os.system() anywhere, but we
+	should try to slap a band-aid on this in srp2.
+	FIX:	2018-10-19
+		Sifted through the entire code base and surrounded every
+		variable being inserted into a string bound for
+		os.system() or commands.get*() with single quotes.  This
+		should hopefully alleviate all of our wonky file name
+		breakage.

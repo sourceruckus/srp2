@@ -50,6 +50,10 @@ next bug will be #098
 	dumping: ############ sometimes gets out of wack and wraps over a
 	few lines...  i probably won't bother fixing this untill i change
 	the ouput methods to fix bug #013.
+	NOTES:	2018-10-19
+		i've been 99% sure this is because we're counting hard
+		links (and symlinks?) repeatedly for years, but haven't
+		bothered to fix.  similar problem to #072.
 
 
 #032	2004-03-14
@@ -152,6 +156,10 @@ next bug will be #098
 #072	2005-11-08
 	srp -c --tally is reporting a different installed size than what's
 	returned by du -hsc.
+	NOTES:	2018-10-19
+		i've been 99% sure this is because we're counting hard
+		links (and symlinks?) repeatedly for years, but haven't
+		bothered to fix.  similar problem to #025.
 
 
 #075	2005-11-10
@@ -203,12 +211,3 @@ next bug will be #098
 	anywhere else then end up getting removed during parsing,
 	resulting in broken build scripts.  I never wrote this up, but
 	have been working around it in NOTES files for years.
-
-
-#097	2018-10-19
-	Trying to install files w/ special characters in their names
-	results in odd behavior and failure.  Problem stems from creating
-	command strings to be passed into os.system(), which invokes a
-	shell.  That underlying design problem is being addressed in the
-	srp3 rewrite, which doesn't use os.system() anywhere, but we
-	should try to slap a band-aid on this in srp2.

@@ -3,7 +3,7 @@ MAKEFILE      =	Makefile
 PRODUCT	      =	srp
 VERSION	      =	2.5.0
 PACKAGEREV    =	1
-DEVTAG	      = dev
+DEVTAG	      =
 
 # Whereas the core SRP source files don't really require anythong beyond
 # Python 2.3 or so, setting this officially to 2.5 means package maintainers
