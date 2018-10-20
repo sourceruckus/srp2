@@ -2030,7 +2030,10 @@ class srp(package):
         sys.stdout.write("mapping dependencies...".ljust(69))
         sys.stdout.flush()
         for i in log:
-            utils.vprint(location + i)
+            # skip all the extra option lines - file paths start with /
+            if not i.startswith("/"):
+                continue
+            utils.vprint("location=%s, i=%s" % (location, i))
             if utils.is_so(location + i):
                 utils.vprint("^^^ is so ^^^")
                 utils.vprint(os.path.basename(i))
