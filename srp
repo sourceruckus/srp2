@@ -111,7 +111,7 @@ def cleanup():
     utils.vprint(files)
     
     if len(files) > 0:
-        go = "rm -rf " + string.join(files)
+        go = "rm -rf '" + string.join(files) + "'"
         utils.vprint(go)
         status = os.system(go)
         if status != 0:
@@ -127,7 +127,7 @@ def lock():
     locks the srp process by creating a lock file.
     retval: 1 = success, 0 = failure
     """
-    status = os.system("touch " + sr.LOCK)
+    status = os.system("touch '" + sr.LOCK + "'")
     if status != 0:
         print "couldn't lock!"
         return 0
@@ -139,7 +139,7 @@ def unlock():
     unlocks the srp process by deleting a lock file.
     retval: 1 = success, 0 = failure
     """
-    status = os.system("rm -f " + sr.LOCK)
+    status = os.system("rm -f '" + sr.LOCK + "'")
     if status != 0:
         print "couldn't unlock!"
         return 0
@@ -726,7 +726,7 @@ def force_cleanup():
                     y = sr.SRP_ROOT_PREFIX + flag.split("=")[1]
                     if x == "SRP_INPLACE":
                         print "must clean up external dir: " + y + "/" + dirname
-                        go = "rm -rf " + y + "/" + dirname + " " + y + "/srp_go"
+                        go = "rm -rf '" + y + "/" + dirname + "' '" + y + "/srp_go'"
                         print go
                         status = os.system(go)
                         if status != 0:

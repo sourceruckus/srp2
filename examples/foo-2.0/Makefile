@@ -25,6 +25,10 @@ SRP:=$(shell pwd)/../../${BUILDDIR}/srp
 
 install: ${BUILDDIR}/foo ${MAKEFILE}
 	install -vD $< ${DESTDIR}${BINDIR}/foo
+	install -vD $< "${DESTDIR}${BINDIR}/foo with spaces"
+	install -vD $< '${DESTDIR}${BINDIR}/foo with $$dollars'
+	install -vD $< '${DESTDIR}${BINDIR}/foo with parens()'
+	install -vD $< '${DESTDIR}${BINDIR}/foo with !banging'
 	install -vD libfoo.la ${DESTDIR}${LIBDIR}/libfoo.la
 
 install-docs: ${BUILDDIR}/README ${MAKEFILE}

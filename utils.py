@@ -149,7 +149,7 @@ def is_so(file):
     if os.path.islink(file):
         file = os.path.realpath(file)
     
-    go = sr.FILE + " " + file
+    go = sr.FILE + " '" + file + "'"
     vprint(go)
     status = commands.getstatusoutput(go)
     vprint(status)
@@ -174,7 +174,7 @@ def is_la(file):
     if os.path.islink(file):
         file = os.path.realpath(file)
     
-    go = sr.FILE + " " + file
+    go = sr.FILE + " '" + file + "'"
     vprint(go)
     status = commands.getstatusoutput(go)
     vprint(status)
@@ -410,7 +410,7 @@ def getsize(file):
     os.path.getsize() follows symbolic links and works recursively...
     retval: size in bytes
     """
-    status = commands.getstatusoutput("du -bs " + file)
+    status = commands.getstatusoutput("du -bs '" + file + "'")
     if status[0] != 0:
         return 0
     
@@ -426,7 +426,7 @@ def getsize(file):
         
         os.mkdir(temp)
         
-        status = commands.getstatusoutput("du -bs " + temp)
+        status = commands.getstatusoutput("du -bs '" + temp + "'")
         if status[0] != 0:
             return 0
         retval = int(status[1].split()[0])

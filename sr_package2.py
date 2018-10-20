@@ -377,7 +377,7 @@ class package:
         os.chdir(location)
 #        print "***** " + os.getcwd()
         
-        size_total = commands.getoutput("du -bs " + temp).split()[0]
+        size_total = commands.getoutput("du -bs '" + temp + "'").split()[0]
 #        print "***** size_total: %s" % (size_total)
         
         for i in list:
@@ -563,7 +563,7 @@ class package:
                     continue
                 
                 if not fake:
-                    go = sr.ACOPY + " " + i + " " + sr.SRP_ROOT_PREFIX + "/" + i[1:]
+                    go = sr.ACOPY + " '" + i + "' '" + sr.SRP_ROOT_PREFIX + "/" + i[1:] + "'"
                     utils.vprint(go)
                     status = os.system(go)
                     if status != 0:
@@ -588,7 +588,7 @@ class package:
 
                 # update deps_lib
                 if os.access(i, os.X_OK):
-                    temp = commands.getstatusoutput("ldd " + i)
+                    temp = commands.getstatusoutput("ldd '" + i + "'")
                     # some plain text files with execute permissions are
                     # causing ldd to spit up, but still return 0 like this:
                     # (0, "lddlibc4: cannot read header from `/opt/ACE/ACE-5.3a/bin/.cvsignore'")
@@ -877,7 +877,7 @@ cd """ + self.inplace + """ &&
             for i in info:
                 #install the infofile
                 utils.vprint(i)
-                go = "install-info " + i[0] + " " + i[1] + " > /dev/null 2>&1"
+                go = "install-info '" + i[0] + "' '" + i[1] + "' > /dev/null 2>&1"
                 utils.vprint(go)
                 if os.system(go) != 0:
                     pass
@@ -919,7 +919,7 @@ cd """ + self.inplace + """ &&
             # and attempt to run ldconfig to update the system
             go = "ldconfig"
             if sr.SRP_ROOT_PREFIX:
-                go += " -r %s" % sr.SRP_ROOT_PREFIX
+                go += " -r '%s'" % sr.SRP_ROOT_PREFIX
             #go += " >/dev/null 2>&1"
             #print go
             os.system(go)
@@ -1644,7 +1644,7 @@ cd """ + self.inplace + """ &&
                     if "SRP_INSTALLINFO" in self.srp_flags:
                         if utils.is_infofile(f):
                             utils.vprint("uninstalling infofile: " + f)
-                            go = "install-info --delete " + f + " " + f[:f.find('/info/')] + "/info/dir > /dev/null 2>&1"
+                            go = "install-info --delete '" + f + "' '" + f[:f.find('/info/')] + "/info/dir' > /dev/null 2>&1"
                             utils.vprint(go)
                             os.system(go)
                     if "SRP_LDCONFIG" in self.srp_flags and self.ldpath == []:
@@ -1716,7 +1716,7 @@ cd """ + self.inplace + """ &&
             # and attempt to run ldconfig to update the system
             go = "ldconfig"
             if sr.SRP_ROOT_PREFIX:
-                go += " -r %s" % sr.SRP_ROOT_PREFIX
+                go += " -r '%s'" % sr.SRP_ROOT_PREFIX
             #go += " >/dev/null 2>&1"
             #print go
             os.system(go)
@@ -2216,7 +2216,7 @@ class srp(package):
         # clean up external dir if we built inplace
         if self.inplace != "":
             utils.vprint("cleaning up external build area")
-            go = "rm -rf " + self.inplace + "/" + self.dirname
+            go = "rm -rf '" + self.inplace + "/" + self.dirname + "'"
             #print go
             status = os.system(go)
             if status != 0:
