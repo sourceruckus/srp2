@@ -80,11 +80,11 @@ TEMPLATE_KEYS =	PYTHON LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS RMKDIR ACOPY 
 .PHONY: distclean docs man
 .PHONY: ${SUBDIRS} ${SUBDIRS:=-clean} ${SUBDIRS:=-distclean}
 
-all: configure mostly_all dist
+all: configure mostly_all
 
 include Makefile.common
 
-mostly_all: bin libs man info #${SUBDIRS}
+mostly_all: bin libs man info
 
 bin: ${BUILDDIR}/${BIN}
 
