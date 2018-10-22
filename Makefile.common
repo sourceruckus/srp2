@@ -126,10 +126,14 @@ TEMPLATE_VALS := $(foreach x,${TEMPLATE_KEYS},$x="'${$x}'")
 	gzip -c $< > $@
 
 %.info: %.texinfo ${MAKEFILE}
-	makeinfo -o $@ $<
+	if [ -x "${MAKEINFO}" ]; then \
+	  ${MAKEINFO} -o $@ $<; \
+	fi
 
 %.pdf: %.texinfo ${MAKEFILE}
-	texi2pdf -q -o $@ $<
+	if [ -x "${TEXI2PDF}" ]; then \
+	  ${TEXI2PDF} -q -o $@ $<; \
+	fi
 
 # woah, this turned out to be ugly...  in order to get the shell to be able to
 # iterate over a list of variables and then resolve them later, i had to export
@@ -193,12 +197,3 @@ dist-brp: ${DIST_SRP} ${MAKEFILE}
 	@echo "creating $@..."
 	SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${SRP} -F
 	REPLYTO=${REPLYTO} SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${SRP} -b ${DIST_SRP} && rm -rf ${SRP_ROOT_PREFIX_for_makefile}
-
-
-dist-iso: dist
-	@echo "creating $@..."
-	if [ -e ${DISTNAME}*.brp ]; then ISOTARGET=${DISTNAME}*.brp; \
-	elif [ -e ${DIST_SRP} ]; then ISOTARGET=${DIST_SRP}; \
-	elif [ -e ${DIST_BZ2} ]; then ISOTARGET=${DIST_BZ2}; \
-	else ISOTARGET=BLARG; \
-	fi && mkisofs -rlDJV "${CDROM_LABEL}" -allow-leading-dots -o ${ISONAME} $$ISOTARGET

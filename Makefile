@@ -12,6 +12,10 @@ DEVTAG	      =
 MIN_PYTHON=2.5
 PYTHON := $(shell which python)
 
+MAKEINFO := $(shell which makeinfo)
+TEXI2PDF := $(shell which texi2pdf)
+INSTALL_INFO := $(shell which install-info)
+
 PREFIX = /usr
 BINDIR = ${PREFIX}/bin
 LIBDIR = ${PREFIX}/lib/srp
@@ -107,14 +111,19 @@ libs: ${LIBS:%=${BUILDDIR}/%}
 
 man: ${BUILDDIR}/${MAN} ${BUILDDIR}/${MAN}.gz 
 
+# only set this dep if MAKEINFO exists
+ifneq (${MAKEINFO},)
 info: ${BUILDDIR}/${TEXINFO} ${BUILDDIR}/${INFO} ${BUILDDIR}/${INFO}.gz
+endif
 
 docs: mostly_all docs-pdf docs-html examples
 
 docs-pdf: ${BUILDDIR}/${PDF}
 
 docs-html: ${BUILDDIR}/${TEXINFO}
-	makeinfo --html -o ${BUILDDIR}/html $<
+	if [ -x "${MAKEINFO}" ]; then \
+	  ${MAKEINFO} --html -o ${BUILDDIR}/html $<; \
+	fi
 
 ruckusdir:
 	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/build
@@ -146,7 +155,7 @@ install-man: man
 install-info: info
 	if [ -x "${INSTALL_INFO}" ]; then \
 	  install -vD --mode=644 ${BUILDDIR}/${INFO}.gz ${DESTDIR}${INFODIR}/${INFO}.gz; \
-	  install-info ${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
+	  ${INSTALL_INFO} ${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
 	fi
 
 install-pdf: docs-pdf
@@ -157,8 +166,8 @@ install-html: docs-html
 	cd ${BUILDDIR}/html && find . ! -type d -exec install -v --mode=644 {} ${DESTDIR}${DOCDIR}/html/{} \;
 
 install-examples: mostly_all
-	cd examples && find . -type d -a ! -path \*/CVS\* -a ! -path \*/${BUILDDIR}\* -exec install -vd ${DESTDIR}${DOCDIR}/examples/{} \;
-	cd examples && find . ! -type d -a ! -path \*/CVS\* -a ! -path \*/${BUILDDIR}\* -exec install -v --mode=644 {} ${DESTDIR}${DOCDIR}/examples/{} \;
+	cd examples && find . -type d -a ! -path \*/${BUILDDIR}\* -exec install -vd ${DESTDIR}${DOCDIR}/examples/{} \;
+	cd examples && find . ! -type d -a ! -path \*/${BUILDDIR}\* -exec install -v --mode=644 {} ${DESTDIR}${DOCDIR}/examples/{} \;
 
 dist: dist-srp
 
@@ -189,8 +198,10 @@ uninstall-man:
 	rm -f ${DESTDIR}${MANDIR}/${MAN}.gz
 
 uninstall-info:
-	install-info --delete ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir
-	rm -f ${DESTDIR}${INFODIR}/${INFO}.gz
+	if [ -x "${INSTALL_INFO}" ]; then \
+	  ${INSTALL_INFO} --delete ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
+	  rm -f ${DESTDIR}${INFODIR}/${INFO}.gz; \
+	fi
 
 uninstall-pdf:
 	rm -f ${DESTDIR}${DOCDIR}/${PDF}
