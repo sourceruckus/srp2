@@ -46,29 +46,31 @@ SH = /bin/bash
 # what is the preferred checksum algorithm?
 CHECKSUM = "sha1"
 
-BIN =	srp
+LIBS =
+LIBS += sr.py
+LIBS += sr_package2.py
+LIBS += utils.py
 
-LIBS =	sr.py \
-	sr_package2.py \
-	utils.py
+DOCS =
+DOCS += AUTHORS
+DOCS += BUGS
+DOCS += BUGS-SQUASHED
+DOCS += COPYING
+DOCS += ChangeLog
+DOCS += INSTALL
+DOCS += NEWS
+DOCS += README
+DOCS += TODO
+DOCS += examples
 
-DOCS =	AUTHORS \
-	BUGS \
-	BUGS-SQUASHED \
-	COPYING \
-	ChangeLog \
-	INSTALL \
-	NEWS \
-	README \
-	TODO \
-	examples
+CONFIG =
+CONFIG += sr.py
 
-CONFIG = 	sr.py
-
-MAN = 		srp.8
-TEXINFO	= 	srp.texinfo
-INFO = 		srp.info
-PDF =		srp.pdf
+BIN = srp
+MAN = ${BIN}.8
+TEXINFO = ${BIN}.texinfo
+INFO = ${BIN}.info
+PDF = ${BIN}.pdf
 
 SUBDIRS=examples
 
@@ -99,7 +101,9 @@ configure:
 	fi
 
 libs: ${LIBS:%=${BUILDDIR}/%}
-	${PYTHON} -c "import compileall; compileall.compile_dir('${BUILDDIR}')"
+	if [ -x "${PYTHON}" ]; then \
+	  ${PYTHON} -c "import compileall; compileall.compile_dir('${BUILDDIR}')"; \
+	fi
 
 man: ${BUILDDIR}/${MAN} ${BUILDDIR}/${MAN}.gz 
 
@@ -129,7 +133,9 @@ install-bin: bin
 install-libs: libs
 	install -vd ${DESTDIR}${LIBDIR}
 	install -vD --mode=644 ${LIBS:%=${BUILDDIR}/%} ${DESTDIR}${LIBDIR}
-	install -vD --mode=644 ${BUILDDIR}/*.pyc ${DESTDIR}${LIBDIR}
+	if [ -x "${PYTHON}" ]; then \
+	  install -vD --mode=644 ${BUILDDIR}/*.pyc ${DESTDIR}${LIBDIR}; \
+	fi
 	install -vD --mode=644 Makefile.common ${DESTDIR}${LIBDIR}/Makefile.common
 	install -vD python-test ${DESTDIR}${LIBDIR}/python-test
 
@@ -138,8 +144,10 @@ install-man: man
 
 
 install-info: info
-	install -vD --mode=644 ${BUILDDIR}/${INFO}.gz ${DESTDIR}${INFODIR}/${INFO}.gz
-	install-info ${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir
+	if [ -x "${INSTALL_INFO}" ]; then \
+	  install -vD --mode=644 ${BUILDDIR}/${INFO}.gz ${DESTDIR}${INFODIR}/${INFO}.gz; \
+	  install-info ${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
+	fi
 
 install-pdf: docs-pdf
 	install -vD --mode=644 ${BUILDDIR}/${PDF} ${DESTDIR}${DOCDIR}/${PDF}

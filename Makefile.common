@@ -168,7 +168,7 @@ ${DIST_BZ2}: ${DIST_DEPS} ${MAKEFILE}
 	${MAKE} distclean
 #	@echo "DISTNAME: ${DISTNAME}"
 	mkdir -p ${BUILDDIR}/${DISTNAME}
-	cd ${BUILDDIR}/${DISTNAME} && tar -C ../../${OFFICIALDIR} -psc --exclude CVS --exclude ${BUILDDIR} . | tar -psx
+	cd ${BUILDDIR}/${DISTNAME} && tar -C ../../${OFFICIALDIR} -psc --exclude .git --exclude ${BUILDDIR} . | tar -psx
 	tar -C ${BUILDDIR} -jcf $@ ${DISTNAME}
 	rm -rf ${BUILDDIR}
 

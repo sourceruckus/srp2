@@ -1,4 +1,4 @@
-2018-10-18: summary of changes from 2.4.1 to 2.5.0
+2018-10-22: summary of changes from 2.4.1 to 2.5.0
 --------------------------------------------------
 
 	- Applied a series of patches I'd been using at work that somehow
@@ -14,6 +14,8 @@
 	    - guarded against dlopen segfault
 	    - keep "statically linked" out of deps_lib
 
+	- made Makefile a bit more flexible and added DESTDIR support to
+	  install targets
 	- squashed bug #098 (blank/special chars in installed filenames)
 
 
