@@ -83,7 +83,7 @@ TEMPLATE_KEYS =	PYTHON LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS RMKDIR ACOPY 
 
 .PHONY: all mostly_all configure info ruckusdir install install-info dist
 .PHONY: install-dist-srp uninstall clean
-.PHONY: distclean docs man
+.PHONY: distclean docs man distcheck check
 .PHONY: ${SUBDIRS} ${SUBDIRS:=-clean} ${SUBDIRS:=-distclean}
 
 all: configure mostly_all
@@ -155,7 +155,7 @@ install-man: man
 install-info: info
 	if [ -x "${INSTALL_INFO}" ]; then \
 	  install -vD --mode=644 ${BUILDDIR}/${INFO}.gz ${DESTDIR}${INFODIR}/${INFO}.gz; \
-	  ${INSTALL_INFO} ${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
+	  ${INSTALL_INFO} ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
 	fi
 
 install-pdf: docs-pdf
@@ -224,6 +224,14 @@ distclean: clean ${SUBDIRS:=-distclean}
 	rm -f ${PRODUCT}-${VERSION}*.srp
 	rm -f ${PRODUCT}-*${VERSION}*.brp
 	rm -f examples/*/Makefile.common
+
+distcheck check: ${DIST_SRP} ${BUILDDIR}/${BIN} ${LIBS:%=${BUILDDIR}/%}
+	SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${BUILDDIR}/${BIN} -F
+	SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${BUILDDIR}/${BIN} -b ${DIST_SRP}
+	SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${BUILDDIR}/${BIN} -i ${DIST_SRP:.srp=*.brp}
+	SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${BUILDDIR}/${BIN} -l srp
+	SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${BUILDDIR}/${BIN} -l --files srp
+	SRP_ROOT_PREFIX=${SRP_ROOT_PREFIX_for_makefile} ${BUILDDIR}/${BIN} -c --tally srp
 
 ${SUBDIRS}:
 	${MAKE} -C $@

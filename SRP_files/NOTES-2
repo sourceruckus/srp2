@@ -20,5 +20,4 @@ SRP_NONE
 SRP_NONE
 SRP_NONE
 SRP_NONE
-make PREFIX=/usr &&
-make PREFIX=$SRP_ROOT/usr install
+make DESTDIR=$SRP_ROOT install
