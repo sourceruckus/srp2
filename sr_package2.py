@@ -10,13 +10,13 @@ import sys
 import stat
 import string
 import socket
-import commands
 import re
 import tarfile
 import pwd
 import grp
 import shutil
 import time
+import subprocess
 
 import sr
 import utils
@@ -377,7 +377,7 @@ class package:
         os.chdir(location)
 #        print "***** " + os.getcwd()
         
-        size_total = commands.getoutput("du -bs '" + temp + "'").split()[0]
+        size_total = utils.getsize(temp, recursive=True)
 #        print "***** size_total: %s" % (size_total)
         
         for i in list:
@@ -563,13 +563,12 @@ class package:
                     continue
                 
                 if not fake:
-                    go = sr.ACOPY + " '" + i + "' '" + sr.SRP_ROOT_PREFIX + "/" + i[1:] + "'"
-                    utils.vprint(go)
-                    status = os.system(go)
-                    if status != 0:
-                        print "couldn't create link: " + sr.SRP_ROOT_PREFIX + "/" + i[1:]
+                    try:
+                        shutil.copy2(i, sr.SRP_ROOT_PREFIX + "/" + i[1:])
+                    except Exception, e:
+                        print "couldn't copy:", sr.SRP_ROOT_PREFIX + "/" + i[1:], ":", e
                         return []
-                    
+                
                 if inplace_log:
                     if sr.SRP_ROOT_PREFIX:
                         temp=self.inplace.split(sr.SRP_ROOT_PREFIX)[-1]
@@ -588,17 +587,20 @@ class package:
 
                 # update deps_lib
                 if os.access(i, os.X_OK):
-                    temp = commands.getstatusoutput("ldd '" + i + "'")
-                    # some plain text files with execute permissions are
-                    # causing ldd to spit up, but still return 0 like this:
-                    # (0, "lddlibc4: cannot read header from `/opt/ACE/ACE-5.3a/bin/.cvsignore'")
-                    if temp[0] == 0:
-                        if not temp[1].startswith("lddlibc4:") and temp[1].strip() != "statically linked":
-                            temp = temp[1].split('\n')
+                    try:
+                        temp = subprocess.check_output([sr.LDD, i])
+                        # some plain text files with execute permissions are
+                        # causing ldd to spit up, but still return 0 like this:
+                        #
+                        # (0, "lddlibc4: cannot read header from `/opt/ACE/ACE-5.3a/bin/.cvsignore'")
+                        if not temp.startswith("lddlibc4:") and temp.strip() != "statically linked":
+                            temp = temp.split('\n')
                             for x in temp:
                                 x = x.split()[0].strip()
                                 if x not in deps_lib:
                                     deps_lib.append(x)
+                    except:
+                        pass
 
             # remove srpbak file if it's not needed
             if force and renamed_file:
@@ -877,13 +879,8 @@ cd """ + self.inplace + """ &&
             for i in info:
                 #install the infofile
                 utils.vprint(i)
-                go = "install-info '" + i[0] + "' '" + i[1] + "' > /dev/null 2>&1"
-                utils.vprint(go)
-                if os.system(go) != 0:
-                    pass
-                    #print "[ failed ]"
-                    #return 0
-                    # i don't think i care about install-info failing...
+                # i don't think i care about install-info failing...
+                subprocess.call([sr.INSTALL_INFO, i[0], i[1]])
             print "[  done  ]"
         
         # take care of ldconfig updates, if need be
@@ -917,12 +914,10 @@ cd """ + self.inplace + """ &&
                         return 0
 
             # and attempt to run ldconfig to update the system
-            go = "ldconfig"
+            go = [sr.LDCONFIG]
             if sr.SRP_ROOT_PREFIX:
-                go += " -r '%s'" % sr.SRP_ROOT_PREFIX
-            #go += " >/dev/null 2>&1"
-            #print go
-            os.system(go)
+                go.extend(["-r", sr.SRP_ROOT_PREFIX])
+            subprocess.call(go)
             print "[  done  ]"
         
         return 1
@@ -1644,9 +1639,10 @@ cd """ + self.inplace + """ &&
                     if "SRP_INSTALLINFO" in self.srp_flags:
                         if utils.is_infofile(f):
                             utils.vprint("uninstalling infofile: " + f)
-                            go = "install-info --delete '" + f + "' '" + f[:f.find('/info/')] + "/info/dir' > /dev/null 2>&1"
-                            utils.vprint(go)
-                            os.system(go)
+                            subprocess.call(
+                                [sr.INSTALL_INFO, "--delete", f,
+                                 f[:f.find('/info/')] + "/info/dir"])
+                    
                     if "SRP_LDCONFIG" in self.srp_flags and self.ldpath == []:
                         if utils.is_so(f):
                             utils.vprint("so: %s" % f)
@@ -1714,12 +1710,10 @@ cd """ + self.inplace + """ &&
 
         if "SRP_LDCONFIG" in self.srp_flags:
             # and attempt to run ldconfig to update the system
-            go = "ldconfig"
+            go = [sr.LDCONFIG]
             if sr.SRP_ROOT_PREFIX:
-                go += " -r '%s'" % sr.SRP_ROOT_PREFIX
-            #go += " >/dev/null 2>&1"
-            #print go
-            os.system(go)
+                go.extend(["-r", sr.SRP_ROOT_PREFIX])
+            subprocess.call(go)
         
         if not failed:
             if not quiet:
@@ -2219,10 +2213,9 @@ class srp(package):
         # clean up external dir if we built inplace
         if self.inplace != "":
             utils.vprint("cleaning up external build area")
-            go = "rm -rf '" + self.inplace + "/" + self.dirname + "'"
-            #print go
-            status = os.system(go)
-            if status != 0:
+            try:
+                shutil.rmtree("%s/%s" % (self.inplace, self.dirname))
+            except:
                 print "couldn't clean up..."
                 return 0
             

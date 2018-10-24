@@ -4,7 +4,6 @@ contains some convenience routines for srp2."""
 import os
 import os.path
 import string
-import commands
 import time
 import socket
 import random
@@ -13,6 +12,7 @@ import sha
 import tarfile
 import stat
 import multiprocessing
+import subprocess
 
 import sr
 
@@ -148,17 +148,14 @@ def is_so(file):
     
     if os.path.islink(file):
         file = os.path.realpath(file)
-    
-    go = sr.FILE + " '" + file + "'"
-    vprint(go)
-    status = commands.getstatusoutput(go)
-    vprint(status)
-    if status[0] != 0:
-        return 0
-    
-    if status[1].find("shared object") != -1:
-        return 1
-    else:
+
+    try:
+        status = subprocess.check_output([sr.FILE, file])
+        if status.find("shared object") != -1:
+            return 1
+        else:
+            return 0
+    except:
         return 0
 
 
@@ -174,16 +171,13 @@ def is_la(file):
     if os.path.islink(file):
         file = os.path.realpath(file)
     
-    go = sr.FILE + " '" + file + "'"
-    vprint(go)
-    status = commands.getstatusoutput(go)
-    vprint(status)
-    if status[0] != 0:
-        return 0
-    
-    if status[1].find("libtool library file") != -1:
-        return 1
-    else:
+    try:
+        status = subprocess.check_output([sr.FILE, file])
+        if status.find("libtool library file") != -1:
+            return 1
+        else:
+            return 0
+    except:
         return 0
 
 
@@ -324,13 +318,15 @@ def hosttype():
     """hosttype() -> type
     determines the host type
     """
-    arch = commands.getoutput("uname -m").lower()
+    temp = os.uname()
+
+    arch = temp[4].lower()
     arch = string.join(arch.split('/'), '-')
     
-    os = commands.getoutput("uname -s").lower()
-    os = string.join(os.split('/'), '-')
+    os_name = temp[0].lower()
+    os_name = string.join(os_name.split('/'), '-')
     
-    return os + "." + arch
+    return os_name + "." + arch
 
 
 def contact():
@@ -404,35 +400,20 @@ def random_dirname(path):
     return foo
 
 
-def getsize(file):
+def getsize(file, recursive=False):
     """getsize(file) -> size
     we use this function to calculate installed sizes because python's
-    os.path.getsize() follows symbolic links and works recursively...
+    os.path.getsize() follows symbolic links.  this will also optionally
+    recursively generate the size of a directory.
     retval: size in bytes
     """
-    status = commands.getstatusoutput("du -bs '" + file + "'")
-    if status[0] != 0:
+    try:
+        if not recursive:
+            return os.lstat(file).st_size
+        else:
+            return long(subprocess.check_output([sr.DU, '-bs', file]).split()[0])
+    except:
         return 0
-    
-    if os.path.islink(file) or os.path.isfile(file):
-        return int(status[1].split()[0])
-    else:
-        # it's a directory...
-        # how big is an empty directory in this filesystem?
-        #os.chdir(file)
-        temp = random_dirname(file)
-        if not temp:
-            return 0
-        
-        os.mkdir(temp)
-        
-        status = commands.getstatusoutput("du -bs '" + temp + "'")
-        if status[0] != 0:
-            return 0
-        retval = int(status[1].split()[0])
-        os.rmdir(temp)
-        
-        return retval
 
 
 def any_of_in(x, y):

@@ -9,12 +9,24 @@ DEVTAG	      =
 # Python 2.3 or so, setting this officially to 2.5 means package maintainers
 # can use anything added in 2.4 or 2.5 in their PREPOSTLIBs (the subprocess
 # module, function decorators, etc).
-MIN_PYTHON=2.5
+MIN_PYTHON=2.7
 PYTHON := $(shell which python)
 
 MAKEINFO := $(shell which makeinfo)
 TEXI2PDF := $(shell which texi2pdf)
 INSTALL_INFO := $(shell which install-info)
+FILE := $(shell which file)
+DU := $(shell which du)
+LDD := $(shell which ldd)
+LDCONFIG := $(shell which ldconfig)
+LDSOCONF := /etc/ld.so.conf
+
+# what shell should we invoke for our scripts?
+SH := $(shell which bash)
+
+# what is the preferred checksum algorithm?
+CHECKSUM := "sha1"
+
 
 PREFIX = /usr
 BINDIR = ${PREFIX}/bin
@@ -33,22 +45,6 @@ SRP_ROOT_PREFIX =
 RUCKUS = ${PREFIX}/src/ruckus
 
 RUCKUS_for_makefile = ${SRP_ROOT_PREFIX}${PREFIX}/src/ruckus
-
-# how can we recursively create directories?
-# works on: linux, hpux 10.20
-RMKDIR = /bin/mkdir -p
-
-# how can we get archive copies of a file?
-# works on: linux
-ACOPY = /bin/cp -a
-# works on: hpux 10.20
-#ACOPY="/bin/cp -pr"
-
-# what shell should we invoke for our scripts?
-SH = /bin/bash
-
-# what is the preferred checksum algorithm?
-CHECKSUM = "sha1"
 
 LIBS =
 LIBS += sr.py
@@ -79,7 +75,7 @@ PDF = ${BIN}.pdf
 SUBDIRS=examples
 
 OFFICIALDIR=.
-TEMPLATE_KEYS =	PYTHON LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS RMKDIR ACOPY SH CHECKSUM BINDIR
+TEMPLATE_KEYS =	PYTHON LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS FILE DU INSTALL_INFO LDD LDCONFIG LDSOCONF SH CHECKSUM BINDIR
 
 .PHONY: all mostly_all configure info ruckusdir install install-info dist
 .PHONY: install-dist-srp uninstall clean

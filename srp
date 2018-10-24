@@ -110,11 +110,11 @@ def lock():
     locks the srp process by creating a lock file.
     retval: 1 = success, 0 = failure
     """
-    status = os.system("touch '" + sr.LOCK + "'")
-    if status != 0:
-        print "couldn't lock!"
+    try:
+        open(sr.LOCK, 'w')
+        return 1
+    except:
         return 0
-    return 1
 
 
 def unlock():
@@ -122,11 +122,11 @@ def unlock():
     unlocks the srp process by deleting a lock file.
     retval: 1 = success, 0 = failure
     """
-    status = os.system("rm -f '" + sr.LOCK + "'")
-    if status != 0:
-        print "couldn't unlock!"
+    try:
+        os.remove(sr.LOCK)
+        return 1
+    except:
         return 0
-    return 1
 
 
 def is_locked():
@@ -709,19 +709,12 @@ def force_cleanup():
                     y = sr.SRP_ROOT_PREFIX + flag.split("=")[1]
                     if x == "SRP_INPLACE":
                         print "must clean up external dir: " + y + "/" + dirname
-                        go = "rm -rf '" + y + "/" + dirname + "' '" + y + "/srp_go'"
-                        print go
-                        status = os.system(go)
-                        if status != 0:
+                        try:
+                            shutil.rmtree("%s/%s" % (y, dirname))
+                            os.remove("%s/srp_go" % y)
+                        except:
                             print "couldn't clean up..."
                             return 0
-
-                        if y + "/" + dirname not in sr.perm_dirs:
-                            try:
-                                utils.vprint("trying to remove " + y + "/" + dirname)
-                                os.rmdir(y + "/" + dirname)
-                            except:
-                                pass
 
         except:
             utils.vprint("opening NOTES file failed, but we don't care")

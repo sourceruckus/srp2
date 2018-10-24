@@ -61,20 +61,20 @@ BLOB2 = "srpblob.tar.bz2"
 # name of PREPOSTLIB module file
 PREPOSTLIB2 = "PREPOSTLIB_2.py"
 
-# how can we recursively create directories?
-RMKDIR = "__RMKDIR__"
-
-# how can we get archive copies of a file?
-ACOPY = "__ACOPY__"
-
 # where is the file command?
-FILE = "/usr/bin/file"
+FILE = "__FILE__"
+
+DU = "__DU__"
+
+INSTALL_INFO = "__INSTALL_INFO__"
+
+LDD = "__LDD__"
 
 # where is the ldconfig command?
-LDCONFIG = "/sbin/ldconfig"
+LDCONFIG = "__LDCONFIG__"
 
 # the ld config file
-LDSOCONF = "/etc/ld.so.conf"
+LDSOCONF = "__LDSOCONF__"
 
 # implicit ldpath entries
 LDPATH_DEFAULT = ['/lib', '/usr/lib', '/usr/local/lib']

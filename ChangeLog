@@ -14,9 +14,14 @@
 	    - guarded against dlopen segfault
 	    - keep "statically linked" out of deps_lib
 
-	- made Makefile a bit more flexible and added DESTDIR support to
-	  install targets
-	- squashed bug #098 (blank/special chars in installed filenames)
+	- Made Makefile a bit more flexible and added DESTDIR support to
+	  install targets.
+	- Squashed bug #098 (blank/special chars in installed filenames).
+	- Removed most of the os.system() and commands.*() usage.  This
+	  should result in overall better performance, especially faster
+	  build and install times for packages.  Plus, it avoids a lot of
+	  potential security problems and any more braindead file name
+	  problems.
 
 
 2007-06-12: summary of changes from 2.4.0 to 2.4.1
