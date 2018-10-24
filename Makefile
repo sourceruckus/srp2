@@ -12,8 +12,11 @@ DEVTAG	      =
 MIN_PYTHON=2.7
 PYTHON := $(shell which python)
 
+# these 2 control building of info and html docs
 MAKEINFO := $(shell which makeinfo)
 TEXI2PDF := $(shell which texi2pdf)
+
+# these get substituted into sr.py for use by srp
 INSTALL_INFO := $(shell which install-info)
 FILE := $(shell which file)
 DU := $(shell which du)
@@ -43,8 +46,6 @@ DOCDIR = ${PREFIX}/share/doc/${PRODUCT}-${VERSIONSTRING}
 SRP_ROOT_PREFIX = 
 
 RUCKUS = ${PREFIX}/src/ruckus
-
-RUCKUS_for_makefile = ${SRP_ROOT_PREFIX}${PREFIX}/src/ruckus
 
 LIBS =
 LIBS += sr.py
@@ -108,13 +109,18 @@ libs: ${LIBS:%=${BUILDDIR}/%}
 man: ${BUILDDIR}/${MAN} ${BUILDDIR}/${MAN}.gz 
 
 # only set this dep if MAKEINFO exists
+info:
 ifneq (${MAKEINFO},)
 info: ${BUILDDIR}/${TEXINFO} ${BUILDDIR}/${INFO} ${BUILDDIR}/${INFO}.gz
 endif
 
 docs: mostly_all docs-pdf docs-html examples
 
+# only set this dep if TEXI2PDF exists
+docs-pdf:
+ifneq (${TEXI2PDF},)
 docs-pdf: ${BUILDDIR}/${PDF}
+endif
 
 docs-html: ${BUILDDIR}/${TEXINFO}
 	if [ -x "${MAKEINFO}" ]; then \
@@ -122,11 +128,11 @@ docs-html: ${BUILDDIR}/${TEXINFO}
 	fi
 
 ruckusdir:
-	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/build
-	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/package
-	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/tmp
-	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/installed
-	mkdir -p ${DESTDIR}${RUCKUS_for_makefile}/brp
+	mkdir -p ${DESTDIR}${RUCKUS}/build
+	mkdir -p ${DESTDIR}${RUCKUS}/package
+	mkdir -p ${DESTDIR}${RUCKUS}/tmp
+	mkdir -p ${DESTDIR}${RUCKUS}/installed
+	mkdir -p ${DESTDIR}${RUCKUS}/brp
 
 install: install-bin install-libs install-man install-info ruckusdir
 
@@ -149,17 +155,23 @@ install-man: man
 
 
 install-info: info
-	if [ -x "${INSTALL_INFO}" ]; then \
+	if [ -x "${MAKEINFO}" ]; then \
 	  install -vD --mode=644 ${BUILDDIR}/${INFO}.gz ${DESTDIR}${INFODIR}/${INFO}.gz; \
-	  ${INSTALL_INFO} ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
+	  install-info ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
 	fi
 
 install-pdf: docs-pdf
-	install -vD --mode=644 ${BUILDDIR}/${PDF} ${DESTDIR}${DOCDIR}/${PDF}
+	if [ -x "${TEXI2PDF}" ]; then \
+	  install -vD --mode=644 ${BUILDDIR}/${PDF} ${DESTDIR}${DOCDIR}/${PDF}; \
+	fi
 
 install-html: docs-html
-	cd ${BUILDDIR}/html && find . -type d -exec install -vd ${DESTDIR}${DOCDIR}/html/{} \;
-	cd ${BUILDDIR}/html && find . ! -type d -exec install -v --mode=644 {} ${DESTDIR}${DOCDIR}/html/{} \;
+	if [ -x "${MAKEINFO}" ]; then \
+	  cd ${BUILDDIR}/html && \
+	  find . -type d -exec install -vd ${DESTDIR}${DOCDIR}/html/{} \; && \
+	  find . ! -type d -exec install -v --mode=644 {} ${DESTDIR}${DOCDIR}/html/{} \; && \
+	  echo good; \
+	fi
 
 install-examples: mostly_all
 	cd examples && find . -type d -a ! -path \*/${BUILDDIR}\* -exec install -vd ${DESTDIR}${DOCDIR}/examples/{} \;
@@ -171,12 +183,12 @@ install-dist-srp: ruckusdir dist-srp mostly_all
 	./${BUILDDIR}/srp -i ${DIST_SRP}
 
 uninstall: uninstall-bin uninstall-libs uninstall-man uninstall-info
-	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/build
-	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/package
-	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/tmp
-	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/installed
-	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}/brp
-	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS_for_makefile}
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS}/build
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS}/package
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS}/tmp
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS}/installed
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS}/brp
+	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS}
 
 uninstall-docs: uninstall-pdf uninstall-html uninstall-examples
 
@@ -194,8 +206,8 @@ uninstall-man:
 	rm -f ${DESTDIR}${MANDIR}/${MAN}.gz
 
 uninstall-info:
-	if [ -x "${INSTALL_INFO}" ]; then \
-	  ${INSTALL_INFO} --delete ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
+	if [ -x "${MAKEINFO}" ]; then \
+	  install-info} --delete ${DESTDIR}${INFODIR}/${INFO}.gz ${DESTDIR}${INFODIR}/dir; \
 	  rm -f ${DESTDIR}${INFODIR}/${INFO}.gz; \
 	fi
 
