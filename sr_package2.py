@@ -878,9 +878,11 @@ cd """ + self.inplace + """ &&
             sys.stdout.flush()
             for i in info:
                 #install the infofile
-                utils.vprint(i)
+                go = [sr.INSTALL_INFO, i[0], i[1]]
+                utils.vprint(go)
                 # i don't think i care about install-info failing...
-                subprocess.call([sr.INSTALL_INFO, i[0], i[1]])
+                subprocess.call(go, stdout=open(os.devnull),
+                                stderr=subprocess.STDOUT)
             print "[  done  ]"
         
         # take care of ldconfig updates, if need be
@@ -1639,9 +1641,11 @@ cd """ + self.inplace + """ &&
                     if "SRP_INSTALLINFO" in self.srp_flags:
                         if utils.is_infofile(f):
                             utils.vprint("uninstalling infofile: " + f)
-                            subprocess.call(
-                                [sr.INSTALL_INFO, "--delete", f,
-                                 f[:f.find('/info/')] + "/info/dir"])
+                            go = [sr.INSTALL_INFO, "--delete", f,
+                                  f[:f.find('/info/')] + "/info/dir"]
+                            utils.vprint(go)
+                            subprocess.call(go, stdout=open(os.devnull),
+                                            stderr=subprocess.STDOUT)
                     
                     if "SRP_LDCONFIG" in self.srp_flags and self.ldpath == []:
                         if utils.is_so(f):
