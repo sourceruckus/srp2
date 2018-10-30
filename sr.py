@@ -7,6 +7,9 @@ import os
 
 # the current version of srp
 VERSION = "__VERSIONSTRING__"
+RELEASE_DATE = "__RELEASE_DATE__"
+AUTHOR = "__AUTHOR__"
+EMAIL = "__EMAIL__"
 
 # this is used to install into another rootfs
 # example: you've booted up into source ruckus linux 3.0 and you

@@ -3,7 +3,7 @@
 
 """\
 The Source Ruckus Packager
-(c) 2001-20018 Michael D Labriola <michael.d.labriola@gmail.com>
+(c) __COPYRIGHT_DATE__ __AUTHOR__ <__EMAIL__>
 
 usage: srp [MODE] ...
   
@@ -731,7 +731,8 @@ def version():
     utils.vprint("readonly")
     sr.READONLY = 1
     
-    print "srp version: " + sr.VERSION
+    print "srp version:", sr.VERSION
+    print "release date:", sr.RELEASE_DATE
     if sr.SRP_ROOT_PREFIX != "":
         print "SRP_ROOT_PREFIX: " + sr.SRP_ROOT_PREFIX
 

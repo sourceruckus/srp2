@@ -104,12 +104,12 @@ endif
 
 # use this to specify path to srp, if need be
 ifeq (${SRP},)
-  SRP=srp
+  SRP=srp2
 endif
 
 
 DIST_BZ2=${DISTNAME}.tar.bz2
-DIST_SRP=${DISTNAME}-${PACKAGEREV}.srp
+DIST_SRP:=$(shell head -n1 SRP_files/${NOTES})-${VERSIONSTRING}-${PACKAGEREV}.srp
 
 # this can be overridden by parent makefiles
 ifeq (${DIST_DEPS},)

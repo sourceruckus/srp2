@@ -5,6 +5,11 @@ VERSION	      =	2.5.0
 PACKAGEREV    =	1
 DEVTAG	      =
 
+AUTHOR = Michael D Labriola
+EMAIL = michael.d.labriola@gmail.com
+COPYRIGHT_DATE = 2001-2018
+RELEASE_DATE = October 30, 2018
+
 # Whereas the core SRP source files don't really require anythong beyond
 # Python 2.3 or so, setting this officially to 2.5 means package maintainers
 # can use anything added in 2.4 or 2.5 in their PREPOSTLIBs (the subprocess
@@ -33,7 +38,7 @@ CHECKSUM := "sha1"
 
 PREFIX = /usr
 BINDIR = ${PREFIX}/bin
-LIBDIR = ${PREFIX}/lib/srp
+LIBDIR = ${PREFIX}/lib/srp2
 MANDIR = ${PREFIX}/share/man/man8
 INFODIR = ${PREFIX}/share/info
 DOCDIR = ${PREFIX}/share/doc/${PRODUCT}-${VERSIONSTRING}
@@ -67,7 +72,7 @@ DOCS += examples
 CONFIG =
 CONFIG += sr.py
 
-BIN = srp
+BIN = srp2
 MAN = ${BIN}.8
 TEXINFO = ${BIN}.texinfo
 INFO = ${BIN}.info
@@ -76,7 +81,7 @@ PDF = ${BIN}.pdf
 SUBDIRS=examples
 
 OFFICIALDIR=.
-TEMPLATE_KEYS =	PYTHON LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS FILE DU INSTALL_INFO LDD LDCONFIG LDSOCONF SH CHECKSUM BINDIR
+TEMPLATE_KEYS =	AUTHOR COPYRIGHT_DATE RELEASE_DATE EMAIL BIN PYTHON LIBDIR VERSIONSTRING SRP_ROOT_PREFIX RUCKUS FILE DU INSTALL_INFO LDD LDCONFIG LDSOCONF SH CHECKSUM BINDIR
 
 .PHONY: all mostly_all configure info ruckusdir install install-info dist
 .PHONY: install-dist-srp uninstall clean
@@ -140,6 +145,7 @@ install-docs: install-pdf install-html install-examples
 
 install-bin: bin
 	install -vD ${BUILDDIR}/${BIN} ${DESTDIR}${BINDIR}/${BIN}
+	ln -s ${BIN} ${DESTDIR}${BINDIR}/${BIN:2=}
 
 install-libs: libs
 	install -vd ${DESTDIR}${LIBDIR}
@@ -180,7 +186,7 @@ install-examples: mostly_all
 dist: dist-srp
 
 install-dist-srp: ruckusdir dist-srp mostly_all
-	./${BUILDDIR}/srp -i ${DIST_SRP}
+	./${BUILDDIR}/${BIN} -i ${DIST_SRP}
 
 uninstall: uninstall-bin uninstall-libs uninstall-man uninstall-info
 	rmdir --ignore-fail-on-non-empty ${DESTDIR}${RUCKUS}/build
@@ -229,8 +235,8 @@ clean: ${SUBDIRS:=-clean}
 
 distclean: clean ${SUBDIRS:=-distclean}
 	rm -f ${PRODUCT}-${VERSION}*.tar.bz2
-	rm -f ${PRODUCT}-${VERSION}*.srp
-	rm -f ${PRODUCT}-*${VERSION}*.brp
+	rm -f ${DIST_SRP}
+	rm -f ${DIST_SRP:.srp=*.brp}
 	rm -f examples/*/Makefile.common
 
 distcheck check: ${DIST_SRP} ${BUILDDIR}/${BIN} ${LIBS:%=${BUILDDIR}/%}

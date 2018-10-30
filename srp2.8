@@ -1,12 +1,12 @@
-.TH "srp" "8" "February 2004" "srp 2.2.1" "Source Ruckus Linux"
+.TH "__BIN__" "8" "__RELEASE_DATE__" "__VERSIONSTRING__" "Source Ruckus Linux"
 .SH NAME
-srp \- the source ruckus packager
+__BIN__ \- the source ruckus packager, version 2
 .SH SYNOPSIS
-.B srp
+.B __BIN__
 \fIMODE \fR[\fIPACKAGE\fR] [\fIFLAGS\fR]
 .SH DESCRIPTION
 .PP
-.I srp\fR is a lightweight source based package manager.
+.I __BIN__\fR is a lightweight source based package manager.
 It is most commonly used to maintain software packages that are compiled and installed from source.
 srp will allow you to install, upgrade, check, and uninstall a source package.
 .SH MODES
@@ -30,12 +30,12 @@ Build a brp from an srp.
 List installed packages.
 .TP
 \fB\-F\fR \ \ \ \ \ \ \ \ \ \ \ \ 
-Force cleanup of build areas.  When srp encounters problems, it usually exits without cleaning up
-it's build areas.  This is so you can try and fix the problem by hand if you want.  Running srp
+Force cleanup of build areas.  When __BIN__ encounters problems, it usually exits without cleaning up
+it's build areas.  This is so you can try and fix the problem by hand if you want.  Running __BIN__
 with this mode will clean up this mess.
 .TP
 \fB\-v\fR \ \ \ \ \ \ \ \ \ \ \ \ 
-Display the version of srp being used
+Display the version of __BIN__ being used
 .SH OPTIONS
 .TP
 \fB\--upgrade\fR
@@ -63,7 +63,7 @@ Used with all modes. Display verbose debugging messages. NOTE: This generally cr
 Used with all modes. Try to work through minor errors.
 .SH FILES
 .TP
-\fB__BINDIR__/srp\fR
+\fB__BINDIR__/__BIN__\fR
 the executable
 .TP
 \fB__LIBDIR__/sr.py\fR
@@ -75,23 +75,23 @@ this python library contains the implementation of a package for srp >= 2.0
 \fB__LIBDIR__/utils.py\fR
 this python library contains helpful routines used by srp
 .SH AUTHOR
-Written by Mike Labriola.
+Written by __AUTHOR__.
 .SH "REPORTING BUGS"
-Report bugs to <mdlabriola@yahoo.com>
+Report bugs to <__EMAIL__>.
 .SH COPYRIGHT
-Copyright \(co 2001-2004 Mike Labriola
+Copyright \(co __COPYRIGHT_DATE__ __AUTHOR__
 .br
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SH "SEE ALSO"
 The full documentation for
-.B srp
+.B __BIN__
 is maintained as a Texinfo manual.  If the
 .B info
 and
-.B srp
+.B __BIN__
 programs are properly installed at your site, the command
 .IP
-.B info srp
+.B info __BIN__
 .PP
 should give you access to the complete manual.

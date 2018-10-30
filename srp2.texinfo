@@ -1,29 +1,29 @@
 \input texinfo   @c -*-texinfo-*-
 @c %**start of header
-@setfilename srp.info
-@settitle SRP - The Source Ruckus Packager
+@setfilename __BIN__.info
+@settitle SRP2 - The Source Ruckus Packager, version 2
 @dircategory Utilities
 @direntry
-* SRP: (srp).                   The Source Ruckus Packager.
+* SRP2: (__BIN__).                   The Source Ruckus Packager, version 2.
 @end direntry
 @c %**end of header
 
 @ifinfo
 This is the texinfo file for srp.
 
-Copyright @copyright{} 2001-2007 Mike Labriola <mdlabriola@@yahoo.com>
+Copyright @copyright{} __COPYRIGHT_DATE__ __AUTHOR__
 @end ifinfo
 
 @titlepage
 @sp 10
 @comment The title is printed in a large font.
-@title SRP - The Source Ruckus Packager
+@title SRP2 - The Source Ruckus Packager, version 2
 @subtitle Version __VERSIONSTRING__
 
 @c The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2001-2007 Mike Labriola <mdlabriola@@yahoo.com>
+Copyright @copyright{} __COPYRIGHT_DATE__ __AUTHOR__
 @end titlepage
 
 @contents
@@ -45,7 +45,7 @@ and install it on many entirely different systems.
 
 @menu
 * Introduction::     Explanation of how SRP works.
-* Usage::            How to use the @code{srp} command line interface.
+* Usage::            How to use the @code{__BIN__} command line interface.
 * Modes::            In depth descussion of how the different modes work.
 * Packages::         Descriptions of the different types of packages.
 * Makefile.common::  How can I add SRP support to my software?
@@ -133,10 +133,10 @@ package, an arangement of other files.  @xref{Packages}, for details.
 @chapter Usage
 @cindex Usage
 @cindex Command line interface
-@code{srp} is invoked like this:
+@code{__BIN__} is invoked like this:
 
 @example
-srp [MODE] [OPTIONS] PACKAGE
+__BIN__ [MODE] [OPTIONS] PACKAGE
 @end example
 
 MODES:
@@ -161,13 +161,13 @@ Build a brp from an srp.
 List installed packages.
 
 @item -F
-Force cleanup of build areas.  When @code{srp} encounters problems, it
+Force cleanup of build areas.  When @code{__BIN__} encounters problems, it
 usually exits without cleaning up it's build areas.  This is so you
-can try and fix the problem by hand if you want.  Running @code{srp} with
+can try and fix the problem by hand if you want.  Running @code{__BIN__} with
 this mode will clean up this mess.
 
 @item -v
-Display the version of @code{srp} being used.
+Display the version of @code{__BIN__} being used.
 
 @end vtable
 
@@ -451,7 +451,7 @@ be @code{NOTES-2}.
 @node fields_notes, , , srp
 @subsection Fields of a NOTES file
 @cindex srp, NOTES file, fields
-A NOTES file for srp2 (NOTES-2) contains the following fields:
+A NOTES file for __BIN__ (NOTES-2) contains the following fields:
 @itemize @bullet
 @item package name@*
 @item bzball name@*
@@ -814,7 +814,7 @@ The BLOB file is a bzipped tarball of the files to be installed.
 This file is created at build time by SRP and contains a list of
 shared libraries that our package requires.
 
-A DEPS_LIB file for srp2 (DEPS_LIB-2) contains the following fields:
+A DEPS_LIB file for __BIN__ (DEPS_LIB-2) contains the following fields:
 @itemize @bullet
 @item list of deps@*
 @end itemize
@@ -828,7 +828,7 @@ Libraries are listed one per line.
 @cindex brp, DEPS_PROG file, fields
 This file lists any executables our package requires.
 
-A DEPS_PROG file for srp2 (DEPS_PROG-2) contains the following fields:
+A DEPS_PROG file for __BIN__ (DEPS_PROG-2) contains the following fields:
 @itemize @bullet
 @item list of deps@*
 @end itemize
@@ -842,7 +842,7 @@ Executables are listed one per line.
 @cindex brp, DEPS_SRP file, fields
 This file lists any packages required by our package.
 
-A DEPS_SRP file for srp2 (DEPS_SRP-2) contains the following fields:
+A DEPS_SRP file for __BIN__ (DEPS_SRP-2) contains the following fields:
 @itemize @bullet
 @item list of deps@*
 @end itemize
@@ -857,7 +857,7 @@ DEPS_PROG and DEPS_LIB should be enough for almost all packages.
 @node fields_files, , , brp
 @subsection Fields of a FILES file
 @cindex brp, FILES file, fields
-A FILES file for srp2 (FILES-2) contains the following fields:
+A FILES file for __BIN__ (FILES-2) contains the following fields:
 @itemize @bullet
 @item build host@*
 @item build date@*
